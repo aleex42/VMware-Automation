@@ -22,17 +22,17 @@ my %opts = (
         help => "Name of dvSwitch",
         required => 1,
         },
-		  'vlan' => {
-		  type => "=i",
-		  help => "VLAN-ID",
-		  required => 1,
-		  },
-		  'new_name' => {
-  		  type => "=s",
-		  help => "New Name for VLAN",
-		  required => 1,
-		  },
-);
+        'vlan' => {
+        type => "=i",
+        help => "VLAN-ID",
+        required => 1,
+        },
+        'new_name' => {
+        type => "=s",
+        help => "New Name for VLAN",
+        required => 1,
+        },
+        );
 Opts::add_options(%opts);
 
 Opts::parse();
@@ -47,32 +47,32 @@ my $dvSwitches = Vim::find_entity_views(view_type => 'DistributedVirtualSwitch',
 
 foreach my $dvs (@$dvSwitches) {
 
-	foreach my $dvs (@$dvSwitches) {
-		if(defined($dvs->portgroup)) {
-	   	my $dvPortgroups = $dvs->portgroup;
+    foreach my $dvs (@$dvSwitches) {
+        if(defined($dvs->portgroup)) {
+            my $dvPortgroups = $dvs->portgroup;
 
-			foreach my $dvpg (@$dvPortgroups) {
-		
-				my $dvpgView = Vim::get_view(mo_ref => $dvpg);
-				my $vlan_id = $dvpgView->{'config'}->{'defaultPortConfig'}->{'vlan'}->{'vlanId'};
-		
-				if($vlan_id eq $vlan){
+            foreach my $dvpg (@$dvPortgroups) {
 
-					my $configVersion = $dvpgView->{'config'}->{'configVersion'};
-					my $spec = DVPortgroupConfigSpec->new(name => $newname, configVersion => $configVersion);
-					$dvpgView->ReconfigureDVPortgroup_Task(spec => $spec);
-					if($@){
-						print "Error: " . $@ . "\n";
-					} else {
-						print $dvpgView->{'name'} . " => " . $newname . "\n";
-					}
-					
-					last;
+                my $dvpgView = Vim::get_view(mo_ref => $dvpg);
+                my $vlan_id = $dvpgView->{'config'}->{'defaultPortConfig'}->{'vlan'}->{'vlanId'};
 
-				}
-			}
-		}
-	}
+                if($vlan_id eq $vlan){
+
+                    my $configVersion = $dvpgView->{'config'}->{'configVersion'};
+                    my $spec = DVPortgroupConfigSpec->new(name => $newname, configVersion => $configVersion);
+                    $dvpgView->ReconfigureDVPortgroup_Task(spec => $spec);
+                    if($@){
+                        print "Error: " . $@ . "\n";
+                    } else {
+                        print $dvpgView->{'name'} . " => " . $newname . "\n";
+                    }
+
+                    last;
+
+                }
+            }
+        }
+    }
 }
 
 Util::disconnect();
