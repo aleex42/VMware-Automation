@@ -7,6 +7,9 @@ VMware-Automation
 * rename-portgroup.pl
   Rename a Portgroup in specified Distributed Switch with specified VLAN-ID
 
+* check_vmware_disk_consolidation.pl
+  Check if VMs need disk consolidation
+
 --
 LICENSE AND COPYRIGHT
 
